@@ -1,0 +1,15 @@
+{
+  "name": "officevolt",
+  "private": true,
+  "workspaces": ["backend", "dashboard", "bot"],
+  "scripts": {
+    "dev": "concurrently -n backend,dashboard,bot -c blue,green,magenta \"npm run dev -w backend\" \"npm run dev -w dashboard\" \"npm run dev -w bot\"",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2",
+    "typescript": "^5.4.0",
+    "vitest": "^1.6.0"
+  }
+}
