@@ -4,11 +4,12 @@ import type { Alert, EvaluateAlertsInput, EvaluateAlertsOutput } from './types'
 
 /* ------------------------------------------------------------------ */
 /*  Office-hours helpers (Bangladesh Standard Time, UTC+6)            */
+/*  Thresholds configurable via env vars for testing.                  */
 /* ------------------------------------------------------------------ */
 
 const BDT_OFFSET_MS = 6 * 60 * 60 * 1000
-const OFFICE_START = 9
-const OFFICE_END = 17
+const OFFICE_START = parseInt(process.env.ALERT_OFFICE_START ?? '9', 10)
+const OFFICE_END = parseInt(process.env.ALERT_OFFICE_END ?? '17', 10)
 
 const isWithinOfficeHours = (date: Date): boolean => {
   const bdtHour = new Date(date.getTime() + BDT_OFFSET_MS).getUTCHours()
@@ -51,7 +52,7 @@ const evaluateAfterHours = (devices: Device[], now: Date): Alert[] => {
     alerts.push({
       id: `after-hours-${room}`,
       type: 'after-hours',
-      message: `${getRoomLabel(room)}: ${roomDevices.length} device(s) are ON outside office hours (09:00-17:00 BDT)`,
+      message: `${getRoomLabel(room)}: ${roomDevices.length} device(s) are ON outside office hours (${String(OFFICE_START).padStart(2, '0')}:00-${String(OFFICE_END).padStart(2, '0')}:00 BDT)`,
       room,
       deviceIds: roomDevices.map((d) => d.id),
       triggeredAt: now.toISOString(),
@@ -63,7 +64,8 @@ const evaluateAfterHours = (devices: Device[], now: Date): Alert[] => {
 }
 
 const evaluateProlongedUsage = (devices: Device[], now: Date): Alert[] => {
-  const twoHoursAgo = now.getTime() - 2 * 60 * 60 * 1000
+  const prolongedHours = parseFloat(process.env.ALERT_PROLONGED_HOURS ?? '2')
+  const twoHoursAgo = now.getTime() - prolongedHours * 60 * 60 * 1000
   const alerts: Alert[] = []
   const byRoom = groupByRoom(devices)
 
@@ -77,7 +79,7 @@ const evaluateProlongedUsage = (devices: Device[], now: Date): Alert[] => {
       alerts.push({
         id: `prolonged-room-usage-${room}`,
         type: 'prolonged-room-usage',
-        message: `${getRoomLabel(room)}: all ${roomDevices.length} devices have been on for over 2 hours`,
+        message: `${getRoomLabel(room)}: all ${roomDevices.length} devices have been on for over ${prolongedHours} hour${prolongedHours !== 1 ? 's' : ''}`,
         room,
         deviceIds: roomDevices.map((d) => d.id),
         triggeredAt: now.toISOString(),

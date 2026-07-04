@@ -22,8 +22,8 @@ F:\IUT Hackathon\
 │       ├── sockets/index.ts
 │       └── index.ts
 │
-├── dashboard/
-│   ├── package.json          # @officevolt/dashboard — React + Vite + Tailwind
+├── frontend/
+│   ├── package.json          # @officevolt/frontend — React + Vite + Tailwind
 │   ├── tsconfig.json
 │   ├── tsconfig.node.json
 │   ├── vite.config.ts

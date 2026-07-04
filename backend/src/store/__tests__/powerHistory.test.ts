@@ -53,6 +53,6 @@ describe('powerHistory backfill', () => {
     recordSnapshot()
 
     const after = getEstimatedKWhToday()
-    expect(after).toBeGreaterThanOrEqual(0)
+    expect(after).toBeGreaterThan(before)
   })
 })

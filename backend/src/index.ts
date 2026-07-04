@@ -1,3 +1,4 @@
+import 'dotenv/config'
 import express from 'express'
 import { createServer } from 'http'
 import { Server as SocketIOServer } from 'socket.io'
@@ -9,7 +10,7 @@ import { requestLogger } from './middleware/logger'
 import { errorHandler } from './middleware/errorHandler'
 
 const PORT = process.env.PORT ?? 3001
-const CORS_ORIGIN = process.env.CORS_ORIGIN ?? '*'
+const CORS_ORIGIN = process.env.CORS_ORIGIN ?? 'http://localhost:5173'
 
 const app = express()
 const httpServer = createServer(app)

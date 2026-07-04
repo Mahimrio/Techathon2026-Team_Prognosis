@@ -1,4 +1,4 @@
-# Prompt 6 — Dashboard UI Completion (Alerts Panel + Office Layout SVG)
+# Prompt 6 — Frontend UI Completion (Alerts Panel + Office Layout SVG)
 
 **Status** — Completed and pushed to `feat/dashboard-ui`. Build passes (72 modules).
 
