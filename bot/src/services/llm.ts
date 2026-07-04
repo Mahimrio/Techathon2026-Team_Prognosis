@@ -4,18 +4,33 @@ interface DeepSeekResponse {
   choices: { message: { content: string } }[]
 }
 
+const validateApiKey = (key: string | undefined): boolean => {
+  if (!key || key.trim().length === 0) {
+    console.error('[llm] LLM_API_KEY is empty or missing')
+    return false
+  }
+  if (key.includes(' ')) {
+    console.error('[llm] LLM_API_KEY contains whitespace — check for leading/trailing spaces')
+    return false
+  }
+  return true
+}
+
 export const humanize = async (text: string): Promise<string> => {
-  if (!LLM_API_KEY) return text
+  if (!validateApiKey(LLM_API_KEY)) return text
+
+  const bearer = `Bearer ${LLM_API_KEY!.trim()}`
+  console.log('[llm] Authorization header prefix OK — "Bearer" present, key length:', LLM_API_KEY!.trim().length)
 
   try {
     const controller = new AbortController()
-    const timeout = setTimeout(() => controller.abort(), 5000)
+    const timeout = setTimeout(() => controller.abort(), 8000)
 
     const res = await fetch('https://api.deepseek.com/v1/chat/completions', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${LLM_API_KEY}`,
+        Authorization: bearer,
       },
       body: JSON.stringify({
         model: 'deepseek-chat',
@@ -35,12 +50,18 @@ export const humanize = async (text: string): Promise<string> => {
 
     clearTimeout(timeout)
 
-    if (!res.ok) return text
+    if (!res.ok) {
+      const body = await res.text().catch(() => '(unable to read body)')
+      console.error(`[llm] DeepSeek API returned ${res.status} ${res.statusText}: ${body}`)
+      return text
+    }
 
     const data = (await res.json()) as DeepSeekResponse
     const content = data.choices?.[0]?.message?.content
     return content?.trim() || text
-  } catch {
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : String(err)
+    console.error('LLM Fetch Error:', msg, (err as any)?.response?.data ?? '(no response body)')
     return text
   }
 }
