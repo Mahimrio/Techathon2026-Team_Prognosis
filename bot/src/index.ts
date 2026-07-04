@@ -96,8 +96,9 @@ client.on(Events.InteractionCreate, async (interaction) => {
     }
     await interaction.reply(reply)
   } catch (err) {
+    console.error('[slash] handler error:', err)
     await interaction.reply({
-      content: `❌ ${(err as Error).message}`,
+      content: '❌ Something went wrong. Please try again.',
       ephemeral: true,
     })
   }
@@ -132,7 +133,8 @@ client.on(Events.MessageCreate, async (message) => {
     }
     await message.reply(reply)
   } catch (err) {
-    await message.reply(`❌ ${(err as Error).message}`)
+    console.error('[prefix] handler error:', err)
+    await message.reply('❌ Something went wrong. Please try again.')
   }
 })
 
