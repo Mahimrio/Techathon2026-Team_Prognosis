@@ -8,6 +8,7 @@
   ],
   "scripts": {
     "dev": "concurrently -n backend,frontend,bot -c blue,green,magenta \"npm run dev -w backend\" \"npm run dev -w frontend\" \"npm run dev -w bot\"",
+    "build": "npm run build --workspaces",
     "start": "concurrently -n backend,bot -c blue,magenta \"npm start -w backend\" \"npm start -w bot\"",
     "test": "vitest run",
     "test:watch": "vitest"
