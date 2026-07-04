@@ -31,45 +31,50 @@ const padVis = (s: string, width: number): string => {
 const sep = (n: number): string => '─'.repeat(n)
 
 export const handleStatus = async (): Promise<string> => {
-  const devices: Device[] = await fetchDevices()
-
-  const total = devices.length
-  const onDevices = devices.filter((d) => d.status === 'on')
-  const onFans = onDevices.filter((d) => d.type === 'fan').length
-  const onLights = onDevices.filter((d) => d.type === 'light').length
-
-  const summary = `🏢 Office Status: ${onDevices.length} of ${total} devices ON (${onFans} fans, ${onLights} lights)`
-
-  const byRoom: Record<string, Device[]> = {}
-  for (const d of devices) {
-    (byRoom[d.room] ??= []).push(d)
-  }
-
-  const rows: string[][] = []
-
-  rows.push([padVis('', COL_LABEL), ...ROOM_ORDER.map((r) => padVis(ROOM_SHORT[r], COL_DATA))])
-  rows.push([sep(COL_LABEL), ...ROOM_ORDER.map(() => sep(COL_DATA))])
-
-  for (const rowLabel of DEVICE_ROWS) {
-    const type = rowLabel.startsWith('fan') ? 'fan' : 'light'
-    const idx = parseInt(rowLabel.replace(type, ''), 10) - 1
-    const row: string[] = [padVis(rowLabel, COL_LABEL)]
-    for (const room of ROOM_ORDER) {
-      const roomDevices = byRoom[room] ?? []
-      const typed = roomDevices.filter((d) => d.type === type)
-      const cell = typed[idx]?.status === 'on' ? '🟢 ON' : '⚪ OFF'
-      row.push(padVis(cell, COL_DATA))
-    }
-    rows.push(row)
-  }
-
-  const grid = '```\n' + rows.map((r) => r.join(' ')).join('\n') + '\n```'
-
-  const raw = summary + '\n' + grid
   try {
-    return await humanize(raw)
+    const devices: Device[] = await fetchDevices()
+
+    const total = devices.length
+    const onDevices = devices.filter((d) => d.status === 'on')
+    const onFans = onDevices.filter((d) => d.type === 'fan').length
+    const onLights = onDevices.filter((d) => d.type === 'light').length
+
+    const summary = `🏢 Office Status: ${onDevices.length} of ${total} devices ON (${onFans} fans, ${onLights} lights)`
+
+    const byRoom: Record<string, Device[]> = {}
+    for (const d of devices) {
+      (byRoom[d.room] ??= []).push(d)
+    }
+
+    const rows: string[][] = []
+
+    rows.push([padVis('', COL_LABEL), ...ROOM_ORDER.map((r) => padVis(ROOM_SHORT[r], COL_DATA))])
+    rows.push([sep(COL_LABEL), ...ROOM_ORDER.map(() => sep(COL_DATA))])
+
+    for (const rowLabel of DEVICE_ROWS) {
+      const type = rowLabel.startsWith('fan') ? 'fan' : 'light'
+      const idx = parseInt(rowLabel.replace(type, ''), 10) - 1
+      const row: string[] = [padVis(rowLabel, COL_LABEL)]
+      for (const room of ROOM_ORDER) {
+        const roomDevices = byRoom[room] ?? []
+        const typed = roomDevices.filter((d) => d.type === type)
+        const cell = typed[idx]?.status === 'on' ? '🟢 ON' : '⚪ OFF'
+        row.push(padVis(cell, COL_DATA))
+      }
+      rows.push(row)
+    }
+
+    const grid = '```\n' + rows.map((r) => r.join(' ')).join('\n') + '\n```'
+
+    const raw = summary + '\n' + grid
+    try {
+      return await humanize(raw)
+    } catch (err) {
+      console.error('[status] humanize failed:', err)
+      return raw
+    }
   } catch (err) {
-    console.error('[status] humanize failed:', err)
-    return raw
+    console.error('[status] handler failed:', err)
+    return '❌ Unable to fetch device data. Please try again.'
   }
 }
