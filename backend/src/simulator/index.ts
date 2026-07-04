@@ -54,6 +54,8 @@ export const startSimulator = (
   console.log(`[simulator] tick engine started (interval=${TICK_INTERVAL_MS}ms)`)
 }
 
+export const getCurrentAlerts = (): Alert[] => currentAlerts
+
 export const stopSimulator = (): void => {
   if (tickTimer) {
     clearInterval(tickTimer)
