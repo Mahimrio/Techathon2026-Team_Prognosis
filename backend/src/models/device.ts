@@ -11,3 +11,11 @@ export interface Device {
   powerDrawWatts: number
   lastChanged: string
 }
+
+export const WATTAGES: Record<DeviceType, number> = {
+  fan: 60,
+  light: 15,
+}
+
+export const computePowerDraw = (type: DeviceType, status: DeviceStatus): number =>
+  status === 'on' ? WATTAGES[type] : 0
