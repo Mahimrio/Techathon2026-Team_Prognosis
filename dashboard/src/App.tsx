@@ -3,6 +3,8 @@ import { useDashboard } from './hooks/useDashboard'
 import Header from './components/Header'
 import DevicePanel from './components/DevicePanel'
 import PowerMeter from './components/PowerMeter'
+import AlertsPanel from './components/AlertsPanel'
+import OfficeLayout from './components/OfficeLayout'
 
 const DashboardContent = () => {
   const { connected } = useSocket()
@@ -22,6 +24,8 @@ const DashboardContent = () => {
         <Header connected={connected} />
         <DevicePanel devices={devices} />
         <PowerMeter usage={usage} />
+        <OfficeLayout devices={devices} />
+        <AlertsPanel />
       </div>
     </div>
   )

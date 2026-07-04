@@ -17,3 +17,15 @@ export interface UsageData {
   roomPower: Record<RoomName, number>
   estimatedKWhToday: number
 }
+
+export type AlertType = 'after-hours' | 'prolonged-room-usage'
+
+export interface Alert {
+  id: string
+  type: AlertType
+  message: string
+  room: string
+  deviceIds: string[]
+  triggeredAt: string
+  resolvedAt: string | null
+}
