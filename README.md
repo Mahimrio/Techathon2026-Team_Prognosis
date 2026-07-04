@@ -335,7 +335,7 @@ Click the "Try it" links in the [API Endpoints](#api-endpoints) section above to
 | **Rianto** | Project initialization, Device Simulator engine, REST API + Socket.IO integration, Dashboard UI (React components, SVG office layout, live data hooks) |
 | **Akif** | Discord bot (all commands: `!status`, `!room`, `!usage`), LLM humanization layer (`DeepSeek` integration with fallback), alert push service, bot emoji alignment fix (`visualWidth`/`padVis` grid helpers for Discord code blocks) |
 | **Dhrubo** | Hardware/electrical schematic guidance, system diagram content, wiring pin-mapping specification |
-| **Mugdho** | Enhanced backend architecture (Single Source of Truth, simulator tick engine, Socket.IO diffing layer); refined core math engine (time-delta alert logic, aggregate power calc, trapezoidal kWh integration); env security separation; cross-workspace testing; Render + Vercel deployments; bot emoji alignment fix; professional README.md |
+| **Mugdho** | Enhanced backend architecture (Single Source of Truth, simulator tick engine, Socket.IO diffing layer); refined core math engine (time-delta alert logic, aggregate power calc, trapezoidal kWh integration); env security separation; cross-workspace testing; Render + Vercel deployments; bot production debugging & error-handling hardening; bot emoji alignment fix; professional README.md |
 
 *Team submitted as **Team Prognosis** for Techathon 2026.*
 
