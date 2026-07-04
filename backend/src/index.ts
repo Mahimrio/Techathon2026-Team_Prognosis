@@ -4,6 +4,7 @@ import { Server as SocketIOServer } from 'socket.io'
 import cors from 'cors'
 import routes from './routes'
 import { registerSocketHandlers } from './sockets'
+import { startSimulator } from './simulator'
 
 const PORT = process.env.PORT ?? 3001
 
@@ -18,6 +19,8 @@ app.use(express.json())
 app.use('/api', routes)
 
 registerSocketHandlers(io)
+
+startSimulator()
 
 httpServer.listen(PORT, () => {
   console.log(`[backend] listening on http://localhost:${PORT}`)
