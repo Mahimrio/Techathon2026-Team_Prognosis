@@ -9,5 +9,6 @@
 
 .fan-spin {
   animation: fan-spin 2s linear infinite;
+  transform-box: fill-box;
   transform-origin: center;
 }

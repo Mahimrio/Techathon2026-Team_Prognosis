@@ -36,9 +36,14 @@ export const useAlerts = (): UseAlertsReturn => {
       if (knownIds.current.has(alert.id)) return
       knownIds.current.add(alert.id)
       setActiveAlerts((prev) => [alert, ...prev])
+      // If re-triggering after a resolve, drop its stale copy from the resolved bin
+      setResolvedAlerts((prev) => prev.filter((a) => a.id !== alert.id))
     }
 
     const onResolved = (alert: Alert) => {
+      // Allow this alert to re-trigger in the future (after-hours alerts naturally
+      // cycle as devices toggle each tick — without this delete they fire only once)
+      knownIds.current.delete(alert.id)
       setActiveAlerts((prev) => prev.filter((a) => a.id !== alert.id))
       setResolvedAlerts((prev) => [alert, ...prev].slice(0, MAX_RESOLVED))
     }
