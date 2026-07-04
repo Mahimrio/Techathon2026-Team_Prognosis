@@ -52,7 +52,7 @@ export const humanize = async (text: string): Promise<string> => {
 
     if (!res.ok) {
       const body = await res.text().catch(() => '(unable to read body)')
-      console.error(`[llm] DeepSeek API returned ${res.status} ${res.statusText}: ${body}`)
+      console.error('LLM API Error:', res.status, body)
       return text
     }
 
@@ -60,8 +60,7 @@ export const humanize = async (text: string): Promise<string> => {
     const content = data.choices?.[0]?.message?.content
     return content?.trim() || text
   } catch (err) {
-    const msg = err instanceof Error ? err.message : String(err)
-    console.error('LLM Fetch Error:', msg, (err as any)?.response?.data ?? '(no response body)')
+    console.error('LLM API Error:', (err as any)?.response?.status, (err as any)?.response?.data || (err instanceof Error ? err.message : String(err)))
     return text
   }
 }
