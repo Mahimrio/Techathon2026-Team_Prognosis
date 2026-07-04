@@ -1,5 +1,5 @@
 {
-  "name": "@officevolt/dashboard",
+  "name": "@officevolt/frontend",
   "private": true,
   "type": "module",
   "scripts": {

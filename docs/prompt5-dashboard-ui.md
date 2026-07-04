@@ -1,4 +1,4 @@
-# Prompt 5 — Core Dashboard UI
+# Prompt 5 — Core Frontend UI
 
 ## Files Created / Changed
 

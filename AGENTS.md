@@ -18,23 +18,24 @@ Run these steps in order after cloning the repo. On step 8, tell the agent you w
 npm install
 
 # 2. Create backend .env from template (copy, don't rename)
-Copy-Item .env.example backend\.env
+Copy-Item backend\.env.example backend\.env
 
-# 3. Create dashboard .env from template
-Copy-Item dashboard\.env.example dashboard\.env
+# 3. Create frontend .env from template
+Copy-Item frontend\.env.example frontend\.env
 
-# 4. (Optional) Edit backend\.env and set these values:
-#    - DISCORD_TOKEN=your_bot_token   (only needed if running the bot)
-#    - LLM_API_KEY=your_deepseek_key  (only needed if using LLM formatting)
-# Defaults work for backend + dashboard without any tokens.
+# 4. (Optional) Create bot .env from template and set these values:
+Copy-Item bot\.env.example bot\.env
+#    - DISCORD_TOKEN=your_bot_token            (required to run the bot)
+#    - LLM_API_KEY=your_deepseek_key           (only needed if using LLM formatting)
+# Defaults work for backend + frontend without any tokens.
 
 # 5. Start backend (port 3001)
 cd backend
 npx tsx src/index.ts
 # Keep this terminal running
 
-# 6. In a second terminal, start dashboard dev server (port 5173)
-cd dashboard
+# 6. In a second terminal, start frontend dev server (port 5173)
+cd frontend
 npx vite
 # Open http://localhost:5173
 
@@ -49,9 +50,8 @@ npx vitest run
 **Quick start (all services at once):**
 ```bash
 npm install
-Copy-Item .env.example backend\.env
-Copy-Item dashboard\.env.example dashboard\.env
-npx concurrently "npm run dev:backend" "npm run dev:dashboard"
+Copy-Item frontend\.env.example frontend\.env
+npx concurrently "npm run dev:backend" "npm run dev:frontend"
 ```
 
 ---
@@ -85,7 +85,7 @@ npx concurrently "npm run dev:backend" "npm run dev:dashboard"
 │   ├── vitest.config.ts
 │   └── tsconfig.json
 │
-├── dashboard/
+├── frontend/
 │   ├── src/
 │   │   ├── main.tsx              # React entry
 │   │   ├── App.tsx               # Root layout: Header, DevicePanel, PowerMeter, OfficeLayout, AlertsPanel
@@ -119,7 +119,7 @@ npx concurrently "npm run dev:backend" "npm run dev:dashboard"
 ├── docs/                         # Per-prompt documentation
 ├── .env.example                  # Template with all env vars (commented defaults)
 ├── .gitignore                    # Unanchored node_modules/, dist/, .env, coverage/
-├── vitest.workspace.ts           # Vitest workspace: backend, dashboard, bot
+├── vitest.workspace.ts           # Vitest workspace: backend, frontend, bot
 ├── package.json                  # Root: npm workspaces + concurrently scripts
 └── AGENTS.md                     # ← You are here
 ```
@@ -134,7 +134,7 @@ npx concurrently "npm run dev:backend" "npm run dev:dashboard"
 ```
 
 - **Backend**: single source of truth. In-memory device store, `setInterval` tick engine, REST + WebSocket push.
-- **Dashboard**: reads from backend on mount, then subscribes to Socket.IO events for real-time updates.
+- **Frontend**: reads from backend on mount, then subscribes to Socket.IO events for real-time updates.
 - **Bot**: never imports backend code — calls `GET /api/devices`, `GET /api/rooms/:room`, `GET /api/usage` over HTTP.
 
 ---
@@ -144,9 +144,9 @@ npx concurrently "npm run dev:backend" "npm run dev:dashboard"
 | Area | Decision |
 |------|----------|
 | Backend | Node.js + TypeScript, Express (REST), Socket.IO (real-time push), in-memory device store (no DB), setInterval-driven simulator tick engine |
-| Dashboard | React + Vite + Tailwind CSS, socket.io-client, Recharts/Chart.js for any charts |
+| Frontend | React + Vite + Tailwind CSS, socket.io-client, Recharts/Chart.js for any charts |
 | Discord bot | discord.js v14, slash commands with legacy "!" prefix aliases, calls backend over HTTP only |
-| Testing | Vitest across backend, dashboard, and bot (consistent tool, fast, works cleanly with the Vite/TS stack already picked) |
+| Testing | Vitest across backend, frontend, and bot (consistent tool, fast, works cleanly with the Vite/TS stack already picked) |
 | LLM | DeepSeek called via its API — read key from `LLM_API_KEY` env. Strictly a formatting layer: rewrites already-correct numbers into friendly sentences, never generates or invents numbers. Always implement a plain-template fallback string for when the call fails or times out, so the bot never goes silent. |
 | Device model | `{ id, name, type: "fan"|"light", room: "drawing"|"work1"|"work2", status: "on"|"off", powerDrawWatts, lastChanged (ISO timestamp) }` |
 | Wattages | fan = 60W, light = 15W (when ON), 0 when OFF. No per-unit randomization. |
@@ -194,10 +194,16 @@ This does NOT apply to device data (devices use the canonical model, seeded with
 | Variable | Required For | Default |
 |----------|-------------|---------|
 | `PORT` | Backend | 3001 |
-| `CORS_ORIGIN` | Backend | `*` |
+| `CORS_ORIGIN` | Backend | `http://localhost:5173` |
 | `SIM_TICK_INTERVAL_MS` | Backend | 10000 |
 | `DISCORD_TOKEN` | Bot | (none) |
+| `DISCORD_ALERT_CHANNEL_ID` | Bot | (none) |
+| `DISCORD_GUILD_ID` | Bot | (none) |
+| `BACKEND_URL` | Bot | `http://localhost:3001` |
 | `LLM_API_KEY` | Bot | (none) |
-| `VITE_BACKEND_URL` | Dashboard | `http://localhost:3001` |
+| `ALERT_PROLONGED_HOURS` | Backend | 2 |
+| `ALERT_OFFICE_START` | Backend | 9 |
+| `ALERT_OFFICE_END` | Backend | 17 |
+| `VITE_BACKEND_URL` | Frontend | `http://localhost:3001` |
 
-The root `.env.example` has all variables listed. Copy to `backend/.env` and `dashboard/.env` (dashboard `.env` is separate because Vite only reads from project root).
+The root `.env.example` has all variables listed. Copy to `backend/.env` and `frontend/.env` (frontend `.env` is separate because Vite only reads from project root).
