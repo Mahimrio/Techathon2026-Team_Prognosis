@@ -198,6 +198,6 @@ This does NOT apply to device data (devices use the canonical model, seeded with
 | `SIM_TICK_INTERVAL_MS` | Backend | 10000 |
 | `DISCORD_TOKEN` | Bot | (none) |
 | `LLM_API_KEY` | Bot | (none) |
-| `VITE_API_URL` | Dashboard | `http://localhost:3001` |
+| `VITE_BACKEND_URL` | Dashboard | `http://localhost:3001` |
 
 The root `.env.example` has all variables listed. Copy to `backend/.env` and `dashboard/.env` (dashboard `.env` is separate because Vite only reads from project root).
