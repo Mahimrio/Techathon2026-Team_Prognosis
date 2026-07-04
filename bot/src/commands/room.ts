@@ -65,8 +65,15 @@ export const handleRoom = async (roomName: string): Promise<string> => {
 
     const grid = '```\n' + rows.map((r) => r.join(' ')).join('\n') + '\n```'
 
-    return await humanize(summary + '\n' + grid)
+    const raw = summary + '\n' + grid
+    try {
+      return await humanize(raw)
+    } catch (err) {
+      console.error('[room] humanize failed:', err)
+      return raw
+    }
   } catch (err) {
-    return `❌ ${(err as Error).message}`
+    console.error('[room] handler failed:', err)
+    return '❌ Unable to fetch room data. Please try again.'
   }
 }

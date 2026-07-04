@@ -65,5 +65,11 @@ export const handleStatus = async (): Promise<string> => {
 
   const grid = '```\n' + rows.map((r) => r.join(' ')).join('\n') + '\n```'
 
-  return await humanize(summary + '\n' + grid)
+  const raw = summary + '\n' + grid
+  try {
+    return await humanize(raw)
+  } catch (err) {
+    console.error('[status] humanize failed:', err)
+    return raw
+  }
 }
