@@ -8,7 +8,9 @@
     "test:watch": "vitest"
   },
   "dependencies": {
-    "discord.js": "^14.14.1"
+    "discord.js": "^14.14.1",
+    "dotenv": "^16.4.0",
+    "socket.io-client": "^4.8.3"
   },
   "devDependencies": {
     "@types/node": "^20.11.0",
